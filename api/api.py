@@ -30,7 +30,7 @@ class patient_features(BaseModel):
 # Define a route at the root web address ("/")
 @app.get("/")
 def status_check():
-        a=2
+
 	return {"Status": "API is online!!!"}
 
 
