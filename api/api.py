@@ -17,14 +17,14 @@ w_df = pd.read_csv("data/Weather_data.csv",parse_dates = ['date'])
 # Create a FastAPI application
 app = FastAPI()
 
-class patient_features(BaseModel):
-	ID : str
-	Timestamp : datetime
-	Origin_lat :float
-	Origin_lon :float
-	Destination_lat :float
-	Destination_lon :float
-	Trip_distance :float
+# class patient_features(BaseModel):
+# 	ID : str
+# 	Timestamp : datetime
+# 	Origin_lat :float
+# 	Origin_lon :float
+# 	Destination_lat :float
+# 	Destination_lon :float
+# 	Trip_distance :float
 	
        
 # Define a route at the root web address ("/")
@@ -35,16 +35,16 @@ def status_check():
 
 
 
-@app.post("/xgb_model")
-def predict_sepssis(data:patient_features):
+# @app.post("/xgboost_model")
+# def predict_sepssis(data:patient_features):
 
-    df = pd.DataFrame([data.model_dump()])
-    cleaned = data_cleaner(df,w_df)
-    forecast=xgboost_pipeline.predict(cleaned)
-    prediction = np.expm1(forecast)
+#     df = pd.DataFrame([data.model_dump()])
+#     cleaned = data_cleaner(df,w_df)
+#     forecast=xgboost_pipeline.predict(cleaned)
+#     prediction = np.expm1(forecast)
 
  
-    return {"prediction": prediction}
+#     return {"prediction": prediction}
 
 
 # @app.post("/log_model")
