@@ -15,40 +15,40 @@ st.set_page_config(page_title="Data", page_icon="💾", layout="wide")
 
 
 
-with open('config.yaml') as file:
-    config = yaml.load(file, Loader=SafeLoader)
+# with open('frontend/config.yaml') as file:
+#     config = yaml.load(file, Loader=SafeLoader)
 
-if __name__ == "__main__":
-
-    
-   authenticator = stauth.Authenticate(
-   config['credentials'],
-   config['cookie']['name'],
-   config['cookie']['key'],
-   config['cookie']['expiry_days'],
-   config['pre-authorized']
-   )
-
-
-authenticator.login(location='sidebar')
-
-if st.session_state["authentication_status"]:
-    authenticator.logout(location = 'sidebar')
-    st.write(f'Welcome *{st.session_state["name"]}*')
-    
-    st.header("Collection of data from AirTigo Telecommunications")
-
-    st.write("This is data is not meant for the public since it contains some private information about people.")
-
-  
-    st.caption('Data was gathered from :red[Yassir Ride Hailing Company]')
-
+# if __name__ == "__main__":
 
     
-elif st.session_state["authentication_status"] is False:
-    st.error('Username/password is incorrect')
-elif st.session_state["authentication_status"] is None:
-    st.warning('Please enter your username and password')
+#    authenticator = stauth.Authenticate(
+#    config['credentials'],
+#    config['cookie']['name'],
+#    config['cookie']['key'],
+#    config['cookie']['expiry_days'],
+#    config['pre-authorized']
+#    )
+
+
+# authenticator.login(location='sidebar')
+
+# if st.session_state["authentication_status"]:
+#     authenticator.logout(location = 'sidebar')
+#     st.write(f'Welcome *{st.session_state["name"]}*')
+    
+st.header("Collection of data from AirTigo Telecommunications")
+
+st.write("This is data is not meant for the public since it contains some private information about people.")
+
+
+st.caption('Data was gathered from :red[Yassir Ride Hailing Company]')
+
+
+    
+# elif st.session_state["authentication_status"] is False:
+#     st.error('Username/password is incorrect')
+# elif st.session_state["authentication_status"] is None:
+#     st.warning('Please enter your username and password')
 
 # Add a selectbox to the sidebar:
 add_selectbox = st.sidebar.selectbox(

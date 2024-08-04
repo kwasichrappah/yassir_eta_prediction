@@ -14,33 +14,33 @@ st.set_page_config(
     layout='wide'
 )
 
-with open('config.yaml') as file:
-   config = yaml.load(file, Loader=SafeLoader)
+# with open('frontend/config.yaml') as file:
+#    config = yaml.load(file, Loader=SafeLoader)
 
 
-   authenticator = stauth.Authenticate(
-   config['credentials'],
-   config['cookie']['name'],
-   config['cookie']['key'],
-   config['cookie']['expiry_days'],
-   config['pre-authorized']
-   )
+#    authenticator = stauth.Authenticate(
+#    config['credentials'],
+#    config['cookie']['name'],
+#    config['cookie']['key'],
+#    config['cookie']['expiry_days'],
+#    config['pre-authorized']
+#    )
 
 
-authenticator.login(location='sidebar')
+# authenticator.login(location='sidebar')
 
-if st.session_state["authentication_status"]:
-   authenticator.logout(location = 'sidebar')
-   st.write(f'Welcome *{st.session_state["name"]}*')
-   df=pd.read_csv('./data/history.csv')
+# if st.session_state["authentication_status"]:
+#    authenticator.logout(location = 'sidebar')
+#    st.write(f'Welcome *{st.session_state["name"]}*')
+df=pd.read_csv('./data/history.csv')
 
-   result = st.data_editor(df,num_rows='dynamic')
+result = st.data_editor(df,num_rows='dynamic')
    
     
-elif st.session_state["authentication_status"] is False:
-    st.error('Username/password is incorrect')
-elif st.session_state["authentication_status"] is None:
-    st.warning('Please enter your username and password')    
+# elif st.session_state["authentication_status"] is False:
+#     st.error('Username/password is incorrect')
+# elif st.session_state["authentication_status"] is None:
+#     st.warning('Please enter your username and password')    
 
 
 # Add a selectbox to the sidebar:

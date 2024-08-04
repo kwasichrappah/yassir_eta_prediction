@@ -58,7 +58,7 @@ def select_model():
 
         #encoder to inverse transform the result
         #encoder = joblib.load('./models/encoder.joblib')
-        return pipeline,encoder
+        return pipeline
 
 
 #Prediction and probability variables state at the start of the webapp
@@ -69,23 +69,13 @@ if 'prediction' not in st.session_state:
 
 #Making prediction 
 def make_prediction(pipeline):
-     ride_id = st.session_state['SeniorCitizen']
-      = st.session_state['Partner']
-     dependents = st.session_state['Dependents']
-     phoneservice = st.session_state['PhoneService']
-     multiplelines = st.session_state['MultipleLines']
-     InternetService = st.session_state['InternetService']
-     onlinesecurity = st.session_state['OnlineSecurity']
-     onlinebackup = st.session_state['OnlineBackup']
-     deviceprotetion = st.session_state['DeviceProtection']
-     techsupport = st.session_state['TechSupport']
-     streamingtv = st.session_state['StreamingTV']
-     streamingmovies = st.session_state['StreamingMovies']
-     contract = st.session_state['Contract']
-     paperlessbilling = st.session_state['PaperlessBilling']
-     tenure = st.session_state['tenure']
-     monthlycharges = st.session_state['MonthlyCharges']
-     paymentmethod = st.session_state['PaymentMethod']
+     id = st.session_state['id']
+     date= st.session_state['date']
+     time = st.session_state['time']
+     origin = st.session_state['gps_full_pick']
+     dest = st.session_state['gps_full_drop']
+     trip_distance = st.session_state['tripdistance']
+
 
      columns = ['SeniorCitizen','Partner','Dependents','PhoneService','MultipleLines',
 
@@ -128,56 +118,39 @@ def display_form():
 
           with col1:
                st.write ('### Ride Information')
-               st.selectbox('Senior Citizen',['Yes','No'],key='SeniorCitizen')
-               st.selectbox('Gender',['Male','Female'],key='gender')
-               st.selectbox('Dependents',['Yes','No'],key='Dependents')
-               st.selectbox('Partner',['Yes','No'],key='Partner')
-               st.selectbox('Phone Service',['Yes','No'],key='PhoneService')
-               st.selectbox('Multiple Lines',['Yes','No'],key='MultipleLines')
-               st.selectbox('Internet Service',['Fiber Optic','DSL'],key='InternetService')
-
-
-          with col2:
-               st.write('### Work Information')
-               st.selectbox('Online Security',['Yes','No'],key='OnlineSecurity')
-               st.selectbox('Online Backup',['Yes','No'],key='OnlineBackup')
-               st.selectbox('Device Protection',['Yes','No'],key='DeviceProtection')
-               st.selectbox('Tech Support',['Yes','No'],key='TechSupport')
-               st.selectbox('Streaming TV',['Yes','No'],key='StreamingTV')
-               st.selectbox('Streaming Movies',['Yes','No'],key='StreamingMovies')
-               st.selectbox('Contract Type',['Month-to-month','One year','Two year'],key='Contract')
-               st.selectbox('Paperless Billing',['Yes','No'],key='PaperlessBilling')
-               st.selectbox('What is your payment method', options=['Electronic Check','Mailed check', 'Bank transfer', 'Credit Card']
-                            ,key='PaymentMethod')
-               st.number_input('Enter your monthly charge', key='MonthlyCharges', min_value=10, max_value=200, step=1)
-               st.number_input('Enter Tenure in months', key = 'tenure', min_value=2, max_value=72, step=1)
+               st.text_input("Ride ID", "Ride order ID",key='id')
+               st.date_input("What day was the pickup", value=None, key = 'date')
+               st.time_input("What time was the pickup", value=None,key='time')
+               st.text_input('Enter your Pickup GPS coordinates', key='gps_full_pick')
+               st.text_input('Enter your Dropoff GPS coordinates', key='gps_full_drop')
+               st.number_input('Enter trip distance in metres', key='tripdistance', min_value=100, max_value=200000, step=1)
                
 
 
-          st.form_submit_button('Predict',on_click = make_prediction,kwargs = dict(pipeline = pipeline,encoder=encoder))
+          st.form_submit_button('Predict',on_click = make_prediction,kwargs = dict(pipeline = pipeline))
 
 
 
-with open('config.yaml') as file:
+with open('frontend/config.yaml') as file:
     config = yaml.load(file, Loader=SafeLoader)
 
 
 
 if __name__ == '__main__':
      
-   authenticator = stauth.Authenticate(
-   config['credentials'],
-   config['cookie']['name'],
-   config['cookie']['key'],
-   config['cookie']['expiry_days'],
-   config['pre-authorized']
-   )
+#    authenticator = stauth.Authenticate(
+#    config['credentials'],
+#    config['cookie']['name'],
+#    config['cookie']['key'],
+#    config['cookie']['expiry_days'],
+#    config['pre-authorized']
+#    )
 
 
-authenticator.login(location='sidebar')
+# authenticator.login(location='sidebar')
 
-if st.session_state["authentication_status"]:
-   authenticator.logout(location = 'sidebar')
+# if st.session_state["authentication_status"]:
+#    authenticator.logout(location = 'sidebar')
    st.write(f'Welcome *{st.session_state["name"]}*')
    st.title("Make a Prediction")
    display_form()
@@ -187,10 +160,10 @@ if st.session_state["authentication_status"]:
 
 
     
-elif st.session_state["authentication_status"] is False:
-    st.error('Username/password is incorrect')
-elif st.session_state["authentication_status"] is None:
-    st.warning('Please enter your username and password')
+# elif st.session_state["authentication_status"] is False:
+#     st.error('Username/password is incorrect')
+# elif st.session_state["authentication_status"] is None:
+#     st.warning('Please enter your username and password')
 
 
 # Add a selectbox to the sidebar:
