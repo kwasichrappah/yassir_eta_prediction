@@ -1,0 +1,27 @@
+credentials:
+  usernames:
+    echrappah:
+      email: emmanuel.chrappah@gmail.com
+      failed_login_attempts: 0 # Will be managed automatically
+      logged_in: False # Will be managed automatically
+      name: JayTraps
+      password: emma # Will be hashed automatically
+    ikwatei:
+      email: gabkwatei@gmail.com
+      failed_login_attempts: 0 
+      logged_in: False 
+      name: Gabriel
+      password: gabkwat123   
+    azubi:
+      email: azubi@azubi.org
+      failed_login_attempts: 0 # Will be managed automatically
+      logged_in: False # Will be managed automatically
+      name: azubiafrica
+      password: azubi # Will be hashed automatically
+cookie:
+  expiry_days: 30
+  key: some_signature_key # Must be string
+  name: some_cookie_name
+pre-authorized:
+  emails:
+  - emmanuel.chrappah@gmail.com
