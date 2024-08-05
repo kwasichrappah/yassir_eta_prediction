@@ -66,36 +66,29 @@ def select_model():
 
 def cleaner(df):
     
-    
-
-#      # Extracting the keys from df1
-#     key = df['date']
-
-#      # Filtering rows in df2 where the key matches any key from df1
-#     filtered_df = w_df[w_df['key'].isin(key)]
-    
-    #merged_df = pd.merge(df, w_df, on='date', how='left')
-#     df['time'] = pd.to_datetime(df['time'])
-#     df['hour']= df['time'].dt.hour
+    df['date'] = pd.to_datetime(df['date'])
+    w_df['date'] = pd.to_datetime(w_df['date'])
+    merged_df = pd.merge(df, w_df, on='date', how='left')
+    merged_df['hour']= merged_df['time'].dt.hour
 
     #split column origin column into two columns
-    df[['Origin_lat', 'Origin_lon']] = df['origin'].str.split(',', 1, expand=True)
-    df[['Destiation_lat', 'Destination_lon']] = df['dest'].str.split(',', 1, expand=True)
+#     df[['Origin_lat', 'Origin_lon']] = df['origin'].str.split(',', 1, expand=True)
+#     df[['Destiation_lat', 'Destination_lon']] = df['dest'].str.split(',', 1, expand=True)
     #Apply cube root transformations
-    df['log_Trip_distance'] = np.cbrt(df['tripdistance'])
+    merged_df['log_Trip_distance'] = np.cbrt(merged_df['Trip_distance'])
 
     #Smoothening some columns
 
     # Apply Gaussian filter with a sigma of 1
-    df['gaussian_surface_pressure'] = gaussian_filter1d(df['surface_pressure'], sigma=1)
-    df['gaussian_mean_sea_level'] = gaussian_filter1d(df['mean_sea_level_pressure'], sigma=1)
-    df['gaussian_dewpoint_2m_temperature'] = gaussian_filter1d(df['dewpoint_2m_temperature'], sigma=1)
+    merged_df['gaussian_surface_pressure'] = gaussian_filter1d(merged_df['surface_pressure'], sigma=1)
+    merged_df['gaussian_mean_sea_level'] = gaussian_filter1d(merged_df['mean_sea_level_pressure'], sigma=1)
+    merged_df['gaussian_dewpoint_2m_temperature'] = gaussian_filter1d(merged_df['dewpoint_2m_temperature'], sigma=1)
 
-    df.drop(columns=['Origin_lat','Origin_lon','Destination_lat','Destination_lon','id','date','tripdistance',
+    merged_df.drop(columns=['Origin_lat','Origin_lon','Destination_lat','Destination_lon','id','date','Trip_distance',
                               'maximum_2m_air_temperature','mean_2m_air_temperature','mean_sea_level_pressure','dewpoint_2m_temperature',
                               'minimum_2m_air_temperature','surface_pressure','u_component_of_wind_10m','v_component_of_wind_10m',
                               'total_precipitation'],axis=1,inplace=True)
-    return df
+    return merged_df
 
 #Prediction and probability variables state at the start of the webapp
 if 'prediction' not in st.session_state:
@@ -123,14 +116,11 @@ def make_prediction(pipeline):
      df = pd.DataFrame(data,columns=columns)
 
      # w_df = pd.read_csv('data/Weather_data.csv')
-     df['date'] = pd.to_datetime(df['date'])
-     w_df['date'] = pd.to_datetime(w_df['date'])
-     merged_df = pd.merge(df, w_df, on='date', how='left')
+     # df['date'] = pd.to_datetime(df['date'])
+     # w_df['date'] = pd.to_datetime(w_df['date'])
+     # merged_df = pd.merge(df, w_df, on='date', how='left')
 
-     mer_df = cleaner(merged_df)
-     
-     #merged_df = pd.merge(df, w_df, on='date', how='left')
-     result = st.data_editor(mer_df,num_rows='dynamic')
+     merged_df = cleaner(data)
      
      
 
@@ -146,12 +136,12 @@ def make_prediction(pipeline):
 
      #Updating state
      
-     #st.session_state['prediction']=merged_df
+     #st.session_state['prediction']=prediction
      
      
      
 
-     return result #st.session_state['prediction'] 
+     return df #st.session_state['prediction']
 
 #Display form on the streamlit app to take user
 def display_form():
@@ -198,7 +188,6 @@ if __name__ == '__main__':
 #   st.write(f'Welcome *{st.session_state["name"]}*')
    st.title("Make a Prediction")
    m=display_form()
-   result = st.data_editor(m,num_rows='dynamic')
 
    st.write(m)#(st.session_state['prediction'])
 
