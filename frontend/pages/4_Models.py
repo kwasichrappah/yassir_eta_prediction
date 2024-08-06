@@ -86,11 +86,12 @@ def cleaner(df):
     df['log_Trip_distance'] = np.cbrt(df['tripdistance'])
 
     #Smoothening some columns
+    df['log_mean_2m_air_temperature'] = np.log1p(df['mean_2m_air_temperature'])
 
     # Apply Gaussian filter with a sigma of 1
-    df['gaussian_surface_pressure'] = gaussian_filter1d(df['surface_pressure'], sigma=1)
-    df['gaussian_mean_sea_level'] = gaussian_filter1d(df['mean_sea_level_pressure'], sigma=1)
-    df['gaussian_dewpoint_2m_temperature'] = gaussian_filter1d(df['dewpoint_2m_temperature'], sigma=1)
+    df['gaussian_surface_pressure'] = gaussian_filter1d(np.log1p(df['surface_pressure']), sigma=1)
+    df['gaussian_mean_sea_level'] = gaussian_filter1d(np.log1p(df['mean_sea_level_pressure']), sigma=1)
+    df['gaussian_dewpoint_2m_temperature'] = gaussian_filter1d(np.log1p(df['dewpoint_2m_temperature']), sigma=1)
 
     df.drop(columns=['gps_dropoff','gps_pickup','id','date','tripdistance',
                               'maximum_2m_air_temperature','mean_2m_air_temperature','mean_sea_level_pressure','dewpoint_2m_temperature',
@@ -132,8 +133,13 @@ def make_prediction(pipeline):
      
      #merged_df = pd.merge(df, w_df, on='date', how='left')
      result = st.data_editor(mer_df,num_rows='dynamic')
+
+     pred = pipeline.predict(mer_df)
+     prediction = np.expm1(pred)
      
+      #Updating state
      
+     #st.session_state['prediction']=merged_df
 
 
 
