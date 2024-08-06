@@ -154,6 +154,12 @@ def make_prediction(pipeline):
 
      return result #st.session_state['prediction'] 
 
+# Create a list of hours
+hours = [f"{i:02d}:00" for i in range(24)]
+
+# Use a selectbox to choose an hour
+
+
 #Display form on the streamlit app to take user
 def display_form():
      pipeline = select_model()
@@ -164,7 +170,7 @@ def display_form():
           with col1:
                st.write ('### Ride Information')
                st.text_input("Ride ID", "Ride order ID",key='id')
-               st.date_input("What day was the pickup", value=None, key = 'date')
+               st.date_input("What day was the pickup",value=None, key = 'date')
                st.time_input("What time was the pickup", value=None,key='time')
                st.text_input('Enter your Pickup GPS coordinates', key='gps_full_pick')
                st.text_input('Enter your Dropoff GPS coordinates', key='gps_full_drop')
