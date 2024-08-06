@@ -60,29 +60,11 @@ def select_model():
         else:
              pipeline = load_svr_pipeline()
 
-        #encoder to inverse transform the result
-        #encoder = joblib.load('./models/encoder.joblib')
         return pipeline
 
+
 def cleaner(df):
-    
-    
-
-#      # Extracting the keys from df1
-#     key = df['date']
-
-#      # Filtering rows in df2 where the key matches any key from df1
-#     filtered_df = w_df[w_df['key'].isin(key)]
-    
-    #merged_df = pd.merge(df, w_df, on='date', how='left')
-#     df['time'] = pd.to_datetime(df['time'])
-#     df['hour']= df['time'].dt.hour
-
-    #split column origin column into two columns
-    # df[['Origin_lat', 'Origin_lon']] = df['gps_pickup'].str.split(n=1, expand=True)
-    # df[['Destiation_lat', 'Destination_lon']] = df['gps_dropoff'].str.split(n= 1, expand=True)
-    # df.drop(columns=['gps_dropoff','gps_pickup'], inplace=True)
-    #Apply cube root transformations
+   #Apply cube root transformations
     df['log_Trip_distance'] = np.cbrt(df['tripdistance'])
 
     #Smoothening some columns
@@ -93,11 +75,14 @@ def cleaner(df):
     df['gaussian_mean_sea_level'] = gaussian_filter1d(np.log1p(df['mean_sea_level_pressure']), sigma=1)
     df['gaussian_dewpoint_2m_temperature'] = gaussian_filter1d(np.log1p(df['dewpoint_2m_temperature']), sigma=1)
 
-    df.drop(columns=['gps_dropoff','gps_pickup','id','date','tripdistance',
+    df.drop(columns=['gps_dropoff','gps_pickup','id','date','tripdistance','time',
                               'maximum_2m_air_temperature','mean_2m_air_temperature','mean_sea_level_pressure','dewpoint_2m_temperature',
                               'minimum_2m_air_temperature','surface_pressure','u_component_of_wind_10m','v_component_of_wind_10m',
                               'total_precipitation'],axis=1,inplace=True)
+    df= df.reindex(columns=['log_mean_2m_air_temperature','gaussian_surface_pressure','gaussian_dewpoint_2m_temperature','gaussian_mean_sea_level','log_Trip_distance'])
+
     return df
+
 
 #Prediction and probability variables state at the start of the webapp
 if 'prediction' not in st.session_state:
@@ -130,35 +115,18 @@ def make_prediction(pipeline):
      merged_df = pd.merge(df, w_df, on='date', how='left')
 
      mer_df = cleaner(merged_df)
+    
      
-     #merged_df = pd.merge(df, w_df, on='date', how='left')
-     result = st.data_editor(mer_df,num_rows='dynamic')
-
+     #Make prediction
      pred = pipeline.predict(mer_df)
      prediction = np.expm1(pred)
      
-      #Updating state
+    #Updating state
      
-     #st.session_state['prediction']=merged_df
-
-
+     st.session_state['prediction'] = prediction
 
      #df.to_csv('.\\data\\history.csv',mode='a',header = not os.path.exists('.\\data\\history.csv'),index=False)
-
-     #Make prediction
-     
-     # pred = pipeline.predict(merged_df)
-     # prediction = np.expm1(pred)
-
-
-     #Updating state
-     
-     #st.session_state['prediction']=merged_df
-     
-     
-     
-
-     return result #st.session_state['prediction'] 
+     return st.session_state['prediction'] 
 
 # Create a list of hours
 hours = [f"{i:02d}:00" for i in range(24)]
@@ -210,10 +178,9 @@ if __name__ == '__main__':
 #    authenticator.logout(location = 'sidebar')
 #   st.write(f'Welcome *{st.session_state["name"]}*')
    st.title("Make a Prediction")
-   m=display_form()
-   result = st.data_editor(m,num_rows='dynamic')
+   display_form()
 
-   st.write(m)#(st.session_state['prediction'])
+   st.write(st.session_state['prediction'])
 
 
 
