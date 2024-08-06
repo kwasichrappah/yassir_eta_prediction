@@ -79,8 +79,9 @@ def cleaner(df):
 #     df['hour']= df['time'].dt.hour
 
     #split column origin column into two columns
-    df[['Origin_lat', 'Origin_lon']] = df['origin'].str.split(',', 1, expand=True)
-    df[['Destiation_lat', 'Destination_lon']] = df['dest'].str.split(',', 1, expand=True)
+    # df[['Origin_lat', 'Origin_lon']] = df['gps_pickup'].str.split(n=1, expand=True)
+    # df[['Destiation_lat', 'Destination_lon']] = df['gps_dropoff'].str.split(n= 1, expand=True)
+    # df.drop(columns=['gps_dropoff','gps_pickup'], inplace=True)
     #Apply cube root transformations
     df['log_Trip_distance'] = np.cbrt(df['tripdistance'])
 
@@ -91,7 +92,7 @@ def cleaner(df):
     df['gaussian_mean_sea_level'] = gaussian_filter1d(df['mean_sea_level_pressure'], sigma=1)
     df['gaussian_dewpoint_2m_temperature'] = gaussian_filter1d(df['dewpoint_2m_temperature'], sigma=1)
 
-    df.drop(columns=['Origin_lat','Origin_lon','Destination_lat','Destination_lon','id','date','tripdistance',
+    df.drop(columns=['gps_dropoff','gps_pickup','id','date','tripdistance',
                               'maximum_2m_air_temperature','mean_2m_air_temperature','mean_sea_level_pressure','dewpoint_2m_temperature',
                               'minimum_2m_air_temperature','surface_pressure','u_component_of_wind_10m','v_component_of_wind_10m',
                               'total_precipitation'],axis=1,inplace=True)
