@@ -93,7 +93,7 @@ def cleaner(df):
     df['gaussian_mean_sea_level'] = gaussian_filter1d(np.log1p(df['mean_sea_level_pressure']), sigma=1)
     df['gaussian_dewpoint_2m_temperature'] = gaussian_filter1d(np.log1p(df['dewpoint_2m_temperature']), sigma=1)
 
-    df.drop(columns=['gps_dropoff','gps_pickup','id','date','tripdistance',
+    df.drop(columns=['gps_dropoff','gps_pickup','id','date','tripdistance','time',
                               'maximum_2m_air_temperature','mean_2m_air_temperature','mean_sea_level_pressure','dewpoint_2m_temperature',
                               'minimum_2m_air_temperature','surface_pressure','u_component_of_wind_10m','v_component_of_wind_10m',
                               'total_precipitation'],axis=1,inplace=True)
