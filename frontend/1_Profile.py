@@ -13,7 +13,7 @@ st.set_page_config(
 )
 
 
-with open('frontend/config.yaml') as file:
+with open('./frontend/config.yaml') as file:
     config = yaml.load(file, Loader=SafeLoader)
 
 
