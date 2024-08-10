@@ -65,7 +65,7 @@ def select_model():
 
 def cleaner(df):
    #Apply cube root transformations
-    df['log_Trip_distance'] = np.cbrt(df['tripdistance'])
+    df['log_Trip_distance'] = np.log1p(df['tripdistance'])
 
     #Smoothening some columns
     df['log_mean_2m_air_temperature'] = np.log1p(df['mean_2m_air_temperature'])
@@ -75,10 +75,11 @@ def cleaner(df):
     df['gaussian_mean_sea_level'] = gaussian_filter1d(np.log1p(df['mean_sea_level_pressure']), sigma=1)
     df['gaussian_dewpoint_2m_temperature'] = gaussian_filter1d(np.log1p(df['dewpoint_2m_temperature']), sigma=1)
 
-    df.drop(columns=['gps_dropoff','gps_pickup','id','date','tripdistance','time',
-                              'maximum_2m_air_temperature','mean_2m_air_temperature','mean_sea_level_pressure','dewpoint_2m_temperature',
-                              'minimum_2m_air_temperature','surface_pressure','u_component_of_wind_10m','v_component_of_wind_10m',
-                              'total_precipitation'],axis=1,inplace=True)
+    
+    columns=['log_mean_2m_air_temperature','gaussian_surface_pressure','gaussian_dewpoint_2m_temperature','gaussian_mean_sea_level','log_Trip_distance']
+
+    # Select only columns 'A' and 'C' using .filter
+    df= df.filter(columns)
     df= df.reindex(columns=['log_mean_2m_air_temperature','gaussian_surface_pressure','gaussian_dewpoint_2m_temperature','gaussian_mean_sea_level','log_Trip_distance'])
 
     return df
@@ -87,7 +88,35 @@ def cleaner(df):
 #Prediction and probability variables state at the start of the webapp
 if 'prediction' not in st.session_state:
      st.session_state['prediction'] = None
+     st.session_state['id'] = None
 
+
+#Make Prediction on large data
+def large_prediction():
+     st.markdown("### Predicting many Trips")
+     pipeline = select_model()
+     with st.expander("Click here to preview uploaded data"):
+          st.write("Yassir Ride Orders")
+          df = pd.read_csv(uploaded_file)
+          st.write(df.head()) 
+    
+     if st.button('Yassir Predict 👍'):
+     
+          df.Timestamp = pd.to_datetime(df.Timestamp)
+          df['date'] = df['Timestamp'].dt.date
+          df['time'] = df['Timestamp'].dt.time
+          w_df['date'] = pd.to_datetime(w_df['date']).dt.date
+          merged_df = pd.merge(df, w_df, on='date', how='left')
+          merged_df.rename(columns={'Trip_distance': 'tripdistance'}, inplace=True)
+          merged_df = cleaner(merged_df)
+          pred = pipeline.predict(merged_df)
+          prediction = np.expm1(pred)
+          merged_df['ID'] = df['ID']
+          merged_df['tripdistance'] = df['Trip_distance']
+          merged_df['Pred_ETA']= prediction
+
+          merged_df[['ID','tripdistance','Pred_ETA']].to_csv('.\\data\\history.csv',mode='a',header = not os.path.exists('.\\data\\history.csv'),index=False)
+          st.write(merged_df[['ID','Pred_ETA']])
 
 
 #Making prediction 
@@ -109,7 +138,7 @@ def make_prediction(pipeline):
      #create dataframe
      df = pd.DataFrame(data,columns=columns)
 
-     # w_df = pd.read_csv('data/Weather_data.csv')
+     
      df['date'] = pd.to_datetime(df['date'])
      w_df['date'] = pd.to_datetime(w_df['date'])
      merged_df = pd.merge(df, w_df, on='date', how='left')
@@ -121,21 +150,21 @@ def make_prediction(pipeline):
      pred = pipeline.predict(mer_df)
      prediction = np.expm1(pred)
      
-    #Updating state
+     df['Pred_ETA']= prediction
+     st.dataframe(df)
+     df[['id','tripdistance','Pred_ETA']].to_csv('.\\data\\history.csv',mode='a',header = not os.path.exists('.\\data\\history.csv'),index=False)
      
      st.session_state['prediction'] = prediction
-
-     #df.to_csv('.\\data\\history.csv',mode='a',header = not os.path.exists('.\\data\\history.csv'),index=False)
-     return st.session_state['prediction'] 
+     return st.session_state['prediction']
 
 # Create a list of hours
 hours = [f"{i:02d}:00" for i in range(24)]
 
-# Use a selectbox to choose an hour
 
 
 #Display form on the streamlit app to take user
 def display_form():
+     st.title("Make a Prediction")
      pipeline = select_model()
 
      with st.form('input-features'):
@@ -174,15 +203,25 @@ if __name__ == '__main__':
 
 authenticator.login(location = 'sidebar')
 
+
+with st.sidebar:
+     uploaded_file = st.file_uploader(
+    "Choose a CSV file", accept_multiple_files=False,key='file',type= 'csv'
+)
+
 if st.session_state["authentication_status"]:
    authenticator.logout(location = 'sidebar')
    st.write(f'Welcome *{st.session_state["name"]}*')
-   st.title("Make a Prediction")
-   display_form()
+   
 
-   st.write(st.session_state['prediction'])
+   if uploaded_file is None:
+        display_form()
+        st.write(st.session_state['prediction'])
+     
 
-
+   else:
+        large_prediction()
+     
 
     
 elif st.session_state["authentication_status"] is False:
@@ -190,14 +229,6 @@ elif st.session_state["authentication_status"] is False:
 elif st.session_state["authentication_status"] is None:
      st.warning('Please enter your username and password')
 
-
-with st.sidebar:
-     uploaded_file = st.file_uploader(
-    "Choose a CSV file", accept_multiple_files=False,key='file',
-)
-
-dataframe = pd.read_csv(uploaded_file)
-st.write(dataframe)
 
 
 # Add a selectbox to the sidebar:
