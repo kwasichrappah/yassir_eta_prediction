@@ -93,7 +93,7 @@ if 'prediction' not in st.session_state:
 #Making prediction 
 def make_prediction(pipeline):
      id = st.session_state['id']
-     date= st.session_state['date']
+     date = st.session_state['date']
      time = st.session_state['time']
      origin = st.session_state['gps_full_pick']
      dest = st.session_state['gps_full_drop']
@@ -163,20 +163,20 @@ with open('frontend/config.yaml') as file:
 
 if __name__ == '__main__':
      
-#    authenticator = stauth.Authenticate(
-#    config['credentials'],
-#    config['cookie']['name'],
-#    config['cookie']['key'],
-#    config['cookie']['expiry_days'],
-#    config['pre-authorized']
-#    )
+   authenticator = stauth.Authenticate(
+   config['credentials'],
+   config['cookie']['name'],
+   config['cookie']['key'],
+   config['cookie']['expiry_days'],
+   config['pre-authorized']
+   )
 
 
-# authenticator.login(location='sidebar')
+authenticator.login(location = 'sidebar')
 
-# if st.session_state["authentication_status"]:
-#    authenticator.logout(location = 'sidebar')
-#   st.write(f'Welcome *{st.session_state["name"]}*')
+if st.session_state["authentication_status"]:
+   authenticator.logout(location = 'sidebar')
+   st.write(f'Welcome *{st.session_state["name"]}*')
    st.title("Make a Prediction")
    display_form()
 
@@ -185,10 +185,10 @@ if __name__ == '__main__':
 
 
     
-# elif st.session_state["authentication_status"] is False:
-#     st.error('Username/password is incorrect')
-# elif st.session_state["authentication_status"] is None:
-#     st.warning('Please enter your username and password')
+elif st.session_state["authentication_status"] is False:
+     st.error('Username/password is incorrect')
+elif st.session_state["authentication_status"] is None:
+     st.warning('Please enter your username and password')
 
 
 # Add a selectbox to the sidebar:

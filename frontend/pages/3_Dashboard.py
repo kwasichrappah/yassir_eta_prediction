@@ -63,8 +63,8 @@ def dropoffs():
 
 
 
-# with open('frontend/config.yaml') as file:
-#     config = yaml.load(file, Loader=SafeLoader)
+with open('frontend/config.yaml') as file:
+    config = yaml.load(file, Loader=SafeLoader)
 
 
 if __name__ == '__main__':
@@ -73,20 +73,20 @@ if __name__ == '__main__':
 
 
 
-#    authenticator = stauth.Authenticate(
-#    config['credentials'],
-#    config['cookie']['name'],
-#    config['cookie']['key'],
-#    config['cookie']['expiry_days'],
-#    config['pre-authorized']
-#    )
+   authenticator = stauth.Authenticate(
+   config['credentials'],
+   config['cookie']['name'],
+   config['cookie']['key'],
+   config['cookie']['expiry_days'],
+   config['pre-authorized']
+   )
 
 
-# authenticator.login(location='sidebar')
+authenticator.login(location='sidebar')
 
-# if st.session_state["authentication_status"]:
-#    authenticator.logout(location = 'sidebar')
-#    st.write(f'Welcome *{st.session_state["name"]}*')
+if st.session_state["authentication_status"]:
+    authenticator.logout(location = 'sidebar')
+    st.write(f'Welcome *{st.session_state["name"]}*')
     st.title("Dashboard")
 
     col1,col2 = st.columns(2)
@@ -113,10 +113,10 @@ if __name__ == '__main__':
             
 
     
-# elif st.session_state["authentication_status"] is False:
-#     st.error('Username/password is incorrect')
-# elif st.session_state["authentication_status"] is None:
-#     st.warning('Please enter your username and password')
+elif st.session_state["authentication_status"] is False:
+    st.error('Username/password is incorrect')
+elif st.session_state["authentication_status"] is None:
+    st.warning('Please enter your username and password')
 
 
 
@@ -125,11 +125,11 @@ if __name__ == '__main__':
 
 
 
-# # Add a selectbox to the sidebar:
-# add_selectbox = st.sidebar.selectbox(
-#     'How I can be contacted?',
-#     ('chrappahkwasi@gmail.com','chrappahkwasi@gmail.com', '0209100603')
-# )
+# Add a selectbox to the sidebar:
+add_selectbox = st.sidebar.selectbox(
+    'How I can be contacted?',
+    ('chrappahkwasi@gmail.com','chrappahkwasi@gmail.com', '0209100603')
+)
         
 
 
