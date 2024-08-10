@@ -191,8 +191,19 @@ elif st.session_state["authentication_status"] is None:
      st.warning('Please enter your username and password')
 
 
+with st.sidebar:
+     uploaded_file = st.file_uploader(
+    "Choose a CSV file", accept_multiple_files=False,key='file',
+)
+
+dataframe = pd.read_csv(uploaded_file)
+st.write(dataframe)
+
+
 # Add a selectbox to the sidebar:
 add_selectbox = st.sidebar.selectbox(
     'How I can be contacted?',
     ('chrappahkwasi@gmail.com','chrappahkwasi@gmail.com', '0209100603')
 )
+
+
