@@ -39,7 +39,7 @@ def load_svr_pipeline():
 
 st.cache_resource(show_spinner="Models Loading")
 def load_xgboost_pipeline():
-    pipeline = joblib.load('./models/Xgboost.joblib')
+    pipeline = joblib.load('./models/xgboost_tuned.joblib')
     return pipeline
 
 #Selecting model for prediction
