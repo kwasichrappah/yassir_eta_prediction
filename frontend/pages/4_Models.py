@@ -144,17 +144,15 @@ def make_prediction(pipeline):
      merged_df = pd.merge(df, w_df, on='date', how='left')
 
      mer_df = cleaner(merged_df)
-    
      
      #Make prediction
      pred = pipeline.predict(mer_df)
      prediction = np.expm1(pred)
      
      df['Pred_ETA']= prediction
-     st.dataframe(df)
      df[['id','tripdistance','Pred_ETA']].to_csv('.\\data\\history.csv',mode='a',header = not os.path.exists('.\\data\\history.csv'),index=False)
-     
-     st.session_state['prediction'] = prediction
+     final = df[['id','tripdistance','Pred_ETA']]
+     st.dataframe(final)
      return st.session_state['prediction']
 
 # Create a list of hours
@@ -165,12 +163,13 @@ hours = [f"{i:02d}:00" for i in range(24)]
 #Display form on the streamlit app to take user
 def display_form():
      st.title("Make a Prediction")
-     pipeline = select_model()
+    
 
-     with st.form('input-features'):
-          col1,col2 = st.columns(2)
+     tab2,tab3 = st.tabs(["### Ride Information","Help"])
 
-          with col1:
+     with tab2:
+               st.title("Make a Prediction")
+               pipeline = select_model()
                st.write ('### Ride Information')
                st.text_input("Ride ID", "Ride order ID",key='id')
                st.date_input("What day was the pickup",value=None, key = 'date')
@@ -178,11 +177,15 @@ def display_form():
                st.text_input('Enter your Pickup GPS coordinates', key='gps_full_pick')
                st.text_input('Enter your Dropoff GPS coordinates', key='gps_full_drop')
                st.number_input('Enter trip distance in metres', key='tripdistance', min_value=100, max_value=200000, step=1)
+
+               if st.button('Yassir Predict 👍'):
+                    make_prediction(pipeline)
+     with tab3:
+               st.write ('### Information Security')
+               st.write("Please know that information contained in this app has no record of any Yassir client information and we uphold upmost privacy for all users")
                
-
-
-          st.form_submit_button('Predict',on_click = make_prediction,kwargs = dict(pipeline = pipeline))
-
+               
+          
 
 
 with open('frontend/config.yaml') as file:
@@ -216,7 +219,7 @@ if st.session_state["authentication_status"]:
 
    if uploaded_file is None:
         display_form()
-        st.write(st.session_state['prediction'])
+        #st.write(st.session_state['prediction'])
      
 
    else:
