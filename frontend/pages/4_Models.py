@@ -207,14 +207,16 @@ if __name__ == '__main__':
 authenticator.login(location = 'sidebar')
 
 
-with st.sidebar:
-     uploaded_file = st.file_uploader(
-    "Choose a CSV file", accept_multiple_files=False,key='file',type= 'csv'
-)
+
 
 if st.session_state["authentication_status"]:
    authenticator.logout(location = 'sidebar')
    st.write(f'Welcome *{st.session_state["name"]}*')
+
+   with st.sidebar:
+     uploaded_file = st.file_uploader(
+    "Choose a CSV file", accept_multiple_files=False,key='file',type= 'csv'
+)
    
 
    if uploaded_file is None:
