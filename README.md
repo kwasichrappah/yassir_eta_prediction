@@ -28,9 +28,9 @@ The dataset used for this project contains confidential information about custom
 ## Getting Started
 1. Clone the repository:
 
-   #git clone https://github.com/kwasichrappah/Sepssis_predictor_webapp_api
+   #git clone https://github.com/kwasichrappah/yassir_eta_prediction
 
-   cd Sepssis_predictor
+   cd yassir_eta_prediction
 2. Install dependencies:
 
    pip install -r requirements.txt
